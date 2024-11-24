@@ -25,8 +25,8 @@ Exposes API endpoints for managing cars.
   ![Screenshot](images/newcar.png)  
   No JWT token used:  
   ![Screenshot](images/newcarunauth.png)  
-  When User tries to access it (JWT of User used in header):  
-  ![Screenshot](images/newcarunauth.png)
+  When User tries to access it, he cannot (JWT of User used in header):  
+  ![Screenshot](images/userrestrict.png)
 
 - **PUT /cars/{id}:** Update car details and availability (only Admin JWT header can access it)  
   ![Screenshot](images/updatecardetails.png)
