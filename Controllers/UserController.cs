@@ -23,7 +23,7 @@ namespace CarRental.Controllers
                 return BadRequest("User already exists");
             }
 
-            return Ok();
+            return Ok("User registered successfully");
         }
 
         [HttpPost("login")]

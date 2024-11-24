@@ -44,7 +44,7 @@ namespace CarRental.Controllers
             }
 
             _carRepository.UpdateCarAvailability(car);
-            return NoContent();
+            return Ok("Car details updated");
         }
 
         [Authorize(Roles = "Admin")]
@@ -58,7 +58,7 @@ namespace CarRental.Controllers
             }
 
             _carRepository.DeleteCar(id);
-            return NoContent();
+            return Ok("Car details deleted");
         }
 
         [HttpGet("{id}")]
