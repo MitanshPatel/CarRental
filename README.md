@@ -1,4 +1,4 @@
-﻿# CarRental
+﻿# CarRental (With Email Integration)
 
 ## User Controller
 
@@ -44,7 +44,15 @@ Exposes API endpoints for managing cars.
   Admin cannot access this:  
   ![Screenshot](images/rent3.png)
 
-- **POST /cars/returncar:** Return a car (only User JWT header can access)  
+- **POST /cars/returncar/{id}:** Return a car (only User JWT header can access)  
   ![Screenshot](images/return1.png)  
   Car Id 2 gets added to available cars:  
   ![Screenshot](images/return2.png)
+
+
+
+
+## Email Integration
+Integrated SendGrid for email confirmation
+![Screenshot](images/email1.png)
+![Screenshot](images/email2.png)

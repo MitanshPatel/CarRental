@@ -12,15 +12,31 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load appsettings.json and appsettings.Secret.json
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile("appsettings.Secret.json", optional: true, reloadOnChange: true);
+
+// Read SendGrid API key and JWT secret from configuration
+var sendGridApiKey = builder.Configuration["SendGrid:ApiKey"];
 var jwtSecret = builder.Configuration["Jwt:Secret"];
+
 if (string.IsNullOrEmpty(jwtSecret))
 {
     throw new ArgumentNullException(nameof(jwtSecret), "JWT Secret cannot be null or empty.");
 }
 
+if (string.IsNullOrEmpty(sendGridApiKey))
+{
+    throw new ArgumentNullException(nameof(sendGridApiKey), "SendGrid API key cannot be null or empty.");
+}
+
 // Add services to the container.
 builder.Services.AddDbContext<CarRentalDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Add logging
+builder.Services.AddLogging();
 
 // Add JWT authentication
 var key = Encoding.ASCII.GetBytes(jwtSecret);
@@ -79,6 +95,13 @@ builder.Services.AddSwaggerGen(c =>
             new string[] { }
         }
     });
+});
+
+// Register EmailService with the API key and logger
+builder.Services.AddSingleton<IEmailService>(sp =>
+{
+    var logger = sp.GetRequiredService<ILogger<EmailService>>();
+    return new EmailService(sendGridApiKey, logger);
 });
 
 // Other service registrations

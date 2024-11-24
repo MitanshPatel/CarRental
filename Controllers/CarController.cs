@@ -12,11 +12,13 @@ namespace CarRental.Controllers
     {
         private readonly ICarRepository _carRepository;
         private readonly ICarRentalService _carRentalService;
+        private readonly IEmailService _emailService;
 
-        public CarsController(ICarRepository carRepository, ICarRentalService carRentalService)
+        public CarsController(ICarRepository carRepository, ICarRentalService carRentalService, IEmailService emailService)
         {
             _carRepository = carRepository;
             _carRentalService = carRentalService;
+            _emailService = emailService;
         }
 
         [HttpGet]
@@ -75,7 +77,7 @@ namespace CarRental.Controllers
 
         [Authorize(Roles = "User")]
         [HttpPost("rentcar")]
-        public IActionResult RentCar(int carId, int userId)
+        public async Task<IActionResult> RentCar(int carId, int userId)
         {
             var success = _carRentalService.RentCar(carId, userId);
             if (!success)
@@ -86,6 +88,14 @@ namespace CarRental.Controllers
             var car = _carRepository.GetCarById(carId);
             car.IsAvailable = false;
             _carRepository.UpdateCarAvailability(car);
+
+
+            // Send email notification
+            var userEmail = "mitanshpatel8@gmail.com";
+            var userName = "Mitansh Patel";
+            var subject = "Car Rental Confirmation";
+            var message = $"Dear {userName},\n\nYour booking for the car {car.Make} {car.Model} has been confirmed.\n\nThank you for choosing our service.";
+            await _emailService.SendEmailAsync(userEmail, subject, message);
 
             return Ok("Car rented successfully.");
         }
