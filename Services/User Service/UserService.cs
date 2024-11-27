@@ -29,13 +29,19 @@ namespace CarRental.Services
         public string AuthenticateUser(string email, string password)
         {
             var user = _userRepository.GetUserByEmail(email);
-            if (user == null || user.Password != password)
+            if (user == null)
             {
-                return null;
+                throw new KeyNotFoundException($"User with email '{email}' not found.");
+            }
+            if (user.Password != password)
+            {
+                throw new UnauthorizedAccessException("Invalid password.");
             }
 
             return _jwtTokenService.GenerateToken(user.Id, user.Role);
         }
+
+
     }
 }
 

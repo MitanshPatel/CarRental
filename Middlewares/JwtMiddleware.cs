@@ -31,7 +31,14 @@ namespace CarRental.Middlewares
         {
             try
             {
-                var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Secret"]);
+                var secret = _configuration["Jwt:Secret"];
+                if (string.IsNullOrEmpty(secret))
+                {
+                    throw new ArgumentNullException(nameof(secret), "JWT secret is not configured.");
+                }
+
+                var key = Encoding.ASCII.GetBytes(secret);
+
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var validationParameters = new TokenValidationParameters
                 {
@@ -44,6 +51,10 @@ namespace CarRental.Middlewares
 
                 var principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
                 context.User = principal;
+            }
+            catch
+            {
+
             }
         }
     }

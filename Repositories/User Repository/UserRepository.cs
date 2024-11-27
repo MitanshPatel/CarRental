@@ -22,12 +22,23 @@ namespace CarRental.Repositories
 
         public UserClass GetUserByEmail(string email)
         {
-            return _context.Set<UserClass>().FirstOrDefault(u => u.Email == email);
+            var user = _context.Set<UserClass>().FirstOrDefault(u => u.Email == email);
+            if (user == null)
+            {
+                throw new KeyNotFoundException($"User with email '{email}' not found.");
+            }
+            return user;
         }
 
         public UserClass GetUserById(int id)
         {
-            return _context.Set<UserClass>().Find(id);
+            var user = _context.Set<UserClass>().Find(id);
+            if (user == null)
+            {
+                throw new KeyNotFoundException($"User with ID '{id}' not found.");
+            }
+            return user;
         }
+
     }
 }

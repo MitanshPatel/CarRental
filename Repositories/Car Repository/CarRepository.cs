@@ -23,8 +23,14 @@ namespace CarRental.Repositories
 
         public CarClass GetCarById(int id)
         {
-            return _context.Set<CarClass>().Find(id);
+            var car = _context.Set<CarClass>().Find(id);
+            if (car == null)
+            {
+                throw new KeyNotFoundException($"Car with ID {id} not found.");
+            }
+            return car;
         }
+
 
         public IEnumerable<CarClass> GetAvailableCars()
         {
