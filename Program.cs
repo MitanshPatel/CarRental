@@ -12,12 +12,10 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Load appsettings.json and appsettings.Secret.json
 builder.Configuration
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddJsonFile("appsettings.Secret.json", optional: true, reloadOnChange: true);
 
-// Read SendGrid API key and JWT secret from configuration
 var sendGridApiKey = builder.Configuration["SendGrid:ApiKey"];
 var jwtSecret = builder.Configuration["Jwt:Secret"];
 
@@ -31,14 +29,11 @@ if (string.IsNullOrEmpty(sendGridApiKey))
     throw new ArgumentNullException(nameof(sendGridApiKey), "SendGrid API key cannot be null or empty.");
 }
 
-// Add services to the container.
 builder.Services.AddDbContext<CarRentalDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Add logging
 builder.Services.AddLogging();
 
-// Add JWT authentication
 var key = Encoding.ASCII.GetBytes(jwtSecret);
 builder.Services.AddAuthentication(options =>
 {
@@ -59,17 +54,14 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// Add authorization
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
     options.AddPolicy("User", policy => policy.RequireRole("User"));
 });
 
-// Add controllers
 builder.Services.AddControllers();
 
-// Add Swagger services
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "CarRental API", Version = "v1" });
@@ -97,14 +89,12 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// Register EmailService with the API key and logger
 builder.Services.AddSingleton<IEmailService>(sp =>
 {
     var logger = sp.GetRequiredService<ILogger<EmailService>>();
     return new EmailService(sendGridApiKey, logger);
 });
 
-// Other service registrations
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICarRepository, CarRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -114,21 +104,16 @@ builder.Services.AddSingleton(new JwtTokenService(jwtSecret));
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
-    // Enable middleware to serve generated Swagger as a JSON endpoint.
     app.UseSwagger();
-    // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
-    // specifying the Swagger JSON endpoint.
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CarRental API v1"));
 }
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Register the JWT middleware
 app.UseMiddleware<JwtMiddleware>();
 
 app.MapControllers();

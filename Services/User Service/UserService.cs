@@ -34,7 +34,6 @@ namespace CarRental.Services
                 return null;
             }
 
-            // Generate JWT token
             return _jwtTokenService.GenerateToken(user.Id, user.Role);
         }
     }

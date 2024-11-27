@@ -1,11 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace CarRental.Middlewares
 {
@@ -49,11 +44,6 @@ namespace CarRental.Middlewares
 
                 var principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
                 context.User = principal;
-            }
-            catch
-            {
-                // Do nothing if JWT validation fails
-                // User is not attached to context so request won't have access to secure routes
             }
         }
     }

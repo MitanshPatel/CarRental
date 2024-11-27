@@ -17,7 +17,6 @@ namespace CarRental.Db_Context
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configure entity properties and relationships here
             modelBuilder.Entity<CarClass>().ToTable("Cars");
             modelBuilder.Entity<UserClass>().ToTable("Users");
         }

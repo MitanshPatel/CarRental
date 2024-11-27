@@ -20,7 +20,6 @@ namespace CarRental.Services
                 return false;
             }
 
-            // Business logic for renting a car
             car.IsAvailable = false;
             _carRepository.UpdateCarAvailability(car);
             return true;
